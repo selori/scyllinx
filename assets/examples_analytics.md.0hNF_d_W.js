@@ -1,0 +1,1 @@
+import{_ as e,c as a,o as t}from"./chunks/framework.S-Qvb3wi.js";const _=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"examples/analytics.md","filePath":"examples/analytics.md"}'),s={name:"examples/analytics.md"};function c(n,r,o,i,l,p){return t(),a("div")}const d=e(s,[["render",c]]);export{_ as __pageData,d as default};
