@@ -3,7 +3,7 @@ import { defineConfig } from "vitepress"
 export default defineConfig({
   title: "ScyllinX",
   description: "A modern TypeScript ORM for ScyllaDB and SQL databases",
-  base: "/",
+  base: "/scyllinx/",
   themeConfig: {
     logo: "/logo.png",
     nav: [
