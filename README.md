@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="docs/public/logo.png" width="100%" height="250" style="object-fit:cover;" alt="ScyllinX Logo" />
+  <img src="docs/public/logo.png" width="100%" height="250" style="object-fit:contain;" alt="ScyllinX Logo" />
 
   <h1>ScyllinX</h1>
   <p>A TypeScript ORM for ScyllaDB and SQL databases inspired by Laravel Eloquent</p>
