@@ -1,0 +1,1 @@
+import{_ as e,c as t,o as a}from"./chunks/framework.BfYphy29.js";const p=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"guide/scylladb-features.md","filePath":"guide/scylladb-features.md"}'),s={name:"guide/scylladb-features.md"};function r(c,d,o,l,n,i){return a(),t("div")}const u=e(s,[["render",r]]);export{p as __pageData,u as default};

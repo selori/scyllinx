@@ -1,0 +1,1 @@
+import{_ as e,c as t,o as a}from"./chunks/framework.BfYphy29.js";const m=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"guide/testing.md","filePath":"guide/testing.md"}'),s={name:"guide/testing.md"};function n(r,i,o,c,d,p){return a(),t("div")}const f=e(s,[["render",n]]);export{m as __pageData,f as default};

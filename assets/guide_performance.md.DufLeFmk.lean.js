@@ -1,1 +1,0 @@
-import{_ as e,c as r,o as t}from"./chunks/framework.S-Qvb3wi.js";const f=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"guide/performance.md","filePath":"guide/performance.md"}'),a={name:"guide/performance.md"};function o(c,n,s,p,d,i){return t(),r("div")}const _=e(a,[["render",o]]);export{f as __pageData,_ as default};
