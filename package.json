@@ -55,10 +55,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/scyllinx/scyllinx.git"
+    "url": "https://github.com/selori/scyllinx.git"
   },
   "bugs": {
-    "url": "https://github.com/scyllinx/scyllinx/issues"
+    "url": "https://github.com/selori/scyllinx/issues"
   },
   "homepage": "https://scyllinx.dev",
   "files": [

@@ -17,7 +17,7 @@ hero:
       link: /guide/quick-start
     - theme: alt
       text: View on GitHub
-      link: https://github.com/scyllinx/scyllinx
+      link: https://github.com/selori/scyllinx
 
 features:
   - icon: ⚡

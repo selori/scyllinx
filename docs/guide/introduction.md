@@ -212,7 +212,7 @@ Ready to get started? Here's what you should read next:
 
 ## Community and Support
 
-- **GitHub**: [https://github.com/scyllinx/scyllinx](https://github.com/scyllinx/scyllinx)
+- **GitHub**: [https://github.com/selori/scyllinx](https://github.com/selori/scyllinx)
 - **Discord**: [Join our Discord server](https://discord.gg/scyllinx)
 - **Twitter**: [@scyllinx](https://twitter.com/scyllinx)
 - **Documentation**: You're reading it! 📖
@@ -221,4 +221,4 @@ Ready to get started? Here's what you should read next:
 
 ScyllinX is open source and we welcome contributions! Whether you're fixing bugs, adding features, or improving documentation, we'd love to have your help.
 
-See our [Contributing Guide](https://github.com/scyllinx/scyllinx/blob/main/CONTRIBUTING.md) to get started.
+See our [Contributing Guide](https://github.com/selori/scyllinx/blob/main/CONTRIBUTING.md) to get started.

@@ -10,7 +10,7 @@ export default defineConfig({
       { text: "Guide", link: "/guide/introduction" },
       { text: "API Reference", link: "/api/index" },
       { text: "Examples", link: "/examples/basic-usage" },
-      { text: "GitHub", link: "https://github.com/scyllinx/scyllinx" },
+      { text: "GitHub", link: "https://github.com/selori/scyllinx" },
     ],
     sidebar: {
       "/guide/": [
@@ -148,7 +148,7 @@ export default defineConfig({
       ],
     },
     socialLinks: [
-      { icon: "github", link: "https://github.com/scyllinx/scyllinx" },
+      { icon: "github", link: "https://github.com/selori/scyllinx" },
       // { icon: "discord", link: "https://discord.gg/scyllinx" },
       // { icon: "twitter", link: "https://twitter.com/scyllinx" },
     ],
@@ -157,7 +157,7 @@ export default defineConfig({
       copyright: `Copyright © ${new Date().getFullYear()} ScyllinX Team`,
     },
     editLink: {
-      pattern: "https://github.com/scyllinx/scyllinx/edit/main/docs/:path",
+      pattern: "https://github.com/selori/scyllinx/edit/main/docs/:path",
       text: "Edit this page on GitHub",
     },
     search: {

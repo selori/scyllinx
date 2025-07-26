@@ -397,6 +397,6 @@ Now that you have ScyllinX installed and configured:
 
 If you run into issues during installation:
 
-- Check the [GitHub Issues](https://github.com/scyllinx/scyllinx/issues)
+- Check the [GitHub Issues](https://github.com/selori/scyllinx/issues)
 - Join our [Discord community](https://discord.gg/scyllinx)
 <!-- - Read the [Troubleshooting Guide](/guide/troubleshooting) -->
