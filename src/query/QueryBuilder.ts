@@ -49,6 +49,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
   // Query components
   protected _select: string[] = ["*"]
   protected _from: string
+  protected _values: Record<string, any> = {}
   protected _joins: any[] = []
   protected _wheres: any[] = []
   protected _groups: string[] = []
@@ -851,6 +852,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
         ifNotExists: this._ifNotExists,
       })
       const params = Object.values(values)
+      this._values = values
 
       await this.driver.query(sql, params)
     }
@@ -904,6 +906,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
       ...this.getWhereParams(this._wheres),
       ...this.getWhereParams(this._ifConditions),
     ]
+    this._values = values
 
     const result = await this.driver.query(sql, params)
     return result.affectedRows || 0
@@ -1015,6 +1018,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
     return {
       columns: this._select,
       from: this._from,
+      values: this._values,
       joins: this._joins,
       wheres: this._wheres,
       groups: this._groups,
@@ -1120,6 +1124,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
     const clone = new QueryBuilder<TModel, TAttrs>(this._from, this.connection)
 
     clone._select = [...this._select]
+    clone._values = this._values,
     clone._joins = [...this._joins]
     clone._wheres = [...this._wheres]
     clone._groups = [...this._groups]

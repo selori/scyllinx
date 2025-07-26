@@ -56,19 +56,38 @@ export class MongoDBDriver extends DatabaseDriver {
   }
 
   /**
-   * Executes a MongoDB operation encoded as a string directive.
-   * Parses collection, method, and parameters, then dispatches the call.
+   * Parses a directive string in the format "collection:method:payload",
+   * optionally bypassing JSON parsing when `raw` is true.
    *
-   * @param operation - Directive in the format "collection:method".
-   * @param params - Parameters object or payload for the operation.
-   * @returns Promise<QueryResult>
-   * @throws Error if the operation is not supported or fails.
+   * @param operation - The directive string, typically in "collection:method:payload" format.
+   * @param operationPayload - Optional pre-parsed payload used only when `raw` is true.
+   * @param raw - Optional flag to bypass JSON parsing and use `operationPayload` directly.
+   * @returns Promise resolving to query results with mapped rows
+   * @throws {Error} When query execution fails
+   * @throws {Error} If the payload is not valid JSON and `raw` is false.
+   *
+   * @example
+   * // Normal directive with JSON payload:
+   * driver.query("users:find:{\"active\":true}")
+   *
+   * // Raw directive with pre-parsed payload:
+   * driver.query("users:insertOne", { name: "Ali" }, true)
    */
-  async query(operation: string, params?: any): Promise<QueryResult> {
+  async query(operation: string, operationPayload?: any, raw?: boolean): Promise<QueryResult> {
     try {
-      const [collectionName, method] = operation.split(":", 2)
-      const payload = params || {}
-      const collection = this.db.collection(collectionName)
+      const [collectionName, method, rawPayload] = operation.split(":", 3);
+      const collection = this.db.collection(collectionName);
+      let payload: any;
+
+      if (raw === true) {
+        payload = operationPayload;
+      } else {
+        try {
+          payload = rawPayload ? JSON.parse(rawPayload) : {};
+        } catch (err) {
+          throw new Error(`Invalid JSON payload in directive: ${rawPayload}`);
+        }
+      }
       let result: any
 
       switch (method) {

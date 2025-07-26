@@ -71,7 +71,7 @@ export abstract class DatabaseDriver {
    * @returns Promise resolving to query results
    * @throws {Error} When query execution fails
    */
-  abstract query(sql: string, bindings?: any[]): Promise<QueryResult>
+  abstract query(sql: string, bindings?: any[], options?: any): Promise<QueryResult>
 
   /**
    * Prepares a SQL statement for repeated execution.
