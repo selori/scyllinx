@@ -1,0 +1,1 @@
+import{_ as e,c as s,o as r}from"./chunks/framework.S-Qvb3wi.js";const d=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"examples/microservices.md","filePath":"examples/microservices.md"}'),t={name:"examples/microservices.md"};function a(c,o,i,m,n,p){return r(),s("div")}const l=e(t,[["render",a]]);export{d as __pageData,l as default};

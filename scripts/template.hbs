@@ -1,0 +1,65 @@
+{{#each this}}
+{{#if @first}}
+---
+title: {{name}}
+---
+
+# {{name}}
+
+{{else}}
+## {{name}}
+{{/if}}
+
+
+{{#if description}}
+{{description}}
+{{/if}}
+
+{{!-- {{#if params}}
+### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+{{#each params}}
+| `{{name}}` | {{type.names.[0]}} | {{description}} |
+{{/each}} --}}
+
+{{#if params}}
+### Parameters
+
+| Name | Description |
+|------|-------------|
+{{#each params}}
+| `{{name}}` | {{description}} |
+{{/each}}
+
+{{#if examples}}
+### Example
+
+{{#each examples}}
+```typescript
+{{{this}}}
+```
+{{/each}}
+{{/if}}
+
+{{/if}}
+
+{{#if returns}}
+
+{{#each returns}}
+  `returns{{type.names.[0]}}` — {{description}}
+{{/each}}
+
+{{/if}}
+
+{{#if throws}}
+## Throws
+
+{{#each throws}}
+- {{description}}
+{{/each}}
+
+{{/if}}
+
+{{/each}}
