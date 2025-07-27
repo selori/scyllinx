@@ -36,7 +36,7 @@ export class MongoDBDriver extends DatabaseDriver {
       maxPoolSize: this.config.maxPoolSize || 10,
       serverSelectionTimeoutMS: this.config.serverSelectionTimeoutMS || 5000,
       socketTimeoutMS: this.config.socketTimeoutMS || 45000,
-      ...this.config,
+      // ...this.config,
     })
     await this.client.connect()
     this.db = this.client.db(this.config.database)
@@ -75,10 +75,15 @@ export class MongoDBDriver extends DatabaseDriver {
    */
   async query(operation: string, operationPayload?: any, raw?: boolean): Promise<QueryResult> {
     try {
-      const [collectionName, method, rawPayload] = operation.split(":", 3);
+      const firstColon = operation.indexOf(":");
+      const secondColon = operation.indexOf(":", firstColon + 1);
+
+      const collectionName = operation.substring(0, firstColon);
+      const method = operation.substring(firstColon + 1, secondColon);
+      const rawPayload = operation.substring(secondColon + 1);
+
       const collection = this.db.collection(collectionName);
       let payload: any;
-
       if (raw === true) {
         payload = operationPayload;
       } else {
@@ -89,6 +94,14 @@ export class MongoDBDriver extends DatabaseDriver {
         }
       }
       let result: any
+      console.log("operation", operation);
+      // console.log("collection", collectionName);
+      // console.log("method", method);
+      // console.log("rawPayload", rawPayload);
+      // console.log("parsed payload", payload);
+      console.log("📁 Collection:", collectionName);
+      console.log("⚙️ Method:", method);
+      console.log("📦 Payload:", JSON.stringify(payload, null, 2));
 
       switch (method) {
         case "find":
@@ -130,6 +143,14 @@ export class MongoDBDriver extends DatabaseDriver {
         case "aggregate":
           result = await collection.aggregate(payload.pipeline, payload.options || {}).toArray()
           return { rows: result, rowCount: result.length }
+
+        case "createCollection":
+          result = await this.db.createCollection(collectionName, payload)
+          return { rows: [], rowCount: 1 }
+
+        case "collMod":
+          result = await this.db.command({collMod: collectionName, ...payload})
+          return { rows: [], rowCount: 1 }
 
         default:
           throw new Error(`Unsupported MongoDB operation: ${method}`)

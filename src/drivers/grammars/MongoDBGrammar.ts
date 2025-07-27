@@ -9,10 +9,13 @@ import { QueryGrammar } from "./QueryGrammar"
  */
 export class MongoDBGrammar extends QueryGrammar {
   compileSelect(query: any): string {
-    if (query.groups || query.havings || query.withCount) {
-      return this.compileAggregateSelect(query)
+    const hasGroups = Array.isArray(query.groups) && query.groups.length > 0;
+    const hasHavings = Array.isArray(query.havings) && query.havings.length > 0;
+
+    if (hasGroups || hasHavings) {
+      return this.compileAggregateSelect(query);
     } else {
-      return this.compileFindSelect(query)
+      return this.compileFindSelect(query);
     }
   }
 
@@ -151,7 +154,7 @@ export class MongoDBGrammar extends QueryGrammar {
    * @returns {string} - Directive string for insert operation.
    */
   compileInsert(query: any): string {
-    const coll = query.from
+    const coll = query.table
     const doc = query.values
     if (Array.isArray(doc)) {
       return `${coll}:insertMany:${JSON.stringify(doc)}`
@@ -166,7 +169,7 @@ export class MongoDBGrammar extends QueryGrammar {
    * @returns {string} - Directive string for update operation.
    */
   compileUpdate(query: any): string {
-    const coll = query.from
+    const coll = query.table
     const filter = this.compileWheres(query.wheres)
     const update = { $set: query.values }
     return `${coll}:updateMany:${JSON.stringify({ filter, update })}`
@@ -179,7 +182,7 @@ export class MongoDBGrammar extends QueryGrammar {
    * @returns {string} - Directive string for delete operation.
    */
   compileDelete(query: any): string {
-    const coll = query.from
+    const coll = query.table
     const filter = this.compileWheres(query.wheres)
     return `${coll}:deleteMany:${JSON.stringify({ filter })}`
   }
@@ -314,6 +317,36 @@ export class MongoDBGrammar extends QueryGrammar {
     return JSON.stringify(value)
   }
 
+  private mapType(type: string, elementType?: string): string | string[] {
+  switch (type) {
+    case "int":
+    case "integer":
+      return "int";
+    case "float":
+    case "double":
+    case "decimal":
+      return "double";
+    case "string":
+      return "string";
+    case "bool":
+    case "boolean":
+      return "bool";
+    case "date":
+    case "datetime":
+      return "date";
+    case "array":
+      return "array";
+    case "object":
+      return "object";
+    case "json":
+      return "object";
+    case "uuid":
+      return "binData";
+    default:
+      return "string"; // fallback
+  }
+}
+
   /**
    * Compiles a create-collection operation for MongoDB.
    * Note: MongoDB creates collections implicitly on insert,
@@ -323,8 +356,42 @@ export class MongoDBGrammar extends QueryGrammar {
    * @returns {string} - Directive string for creating a collection.
    */
   compileCreateTable(definition: TableDefinition): string {
-    const coll = definition.name
-    return `${coll}:createCollection:${JSON.stringify(definition.tableOptions || {})}`
+    const coll = definition.name;
+
+    const validator: any = {
+      $jsonSchema: {
+        bsonType: "object",
+        required: definition.columns
+          .filter(col => col.required)
+          .map(col => col.name),
+        properties: {},
+      }
+    };
+
+    for (const col of definition.columns) {
+      const prop: any = {
+        bsonType: this.mapType(col.type, col.elementType),
+      };
+
+      if (col.maxLength) prop.maxLength = col.maxLength;
+      if (col.minLength) prop.minLength = col.minLength;
+      if (col.minimum) prop.minimum = col.minimum;
+      if (col.maximum) prop.maximum = col.maximum;
+      if (col.allowed) prop.enum = col.allowed;
+      if (col.nullable === false) prop.nullable = false;
+      if (col.default) prop.default = col.default
+
+      validator.$jsonSchema.properties[col.name] = prop;
+    }
+
+    const options = {
+      validator,
+      validationLevel: "strict",
+      validationAction: "error",
+      ...definition.tableOptions
+    };
+
+    return `${coll}:createCollection:${JSON.stringify(options)}`;
   }
 
   /**
@@ -335,8 +402,42 @@ export class MongoDBGrammar extends QueryGrammar {
    * @returns {string} - Directive string for modifying collection.
    */
   compileAlterTable(definition: TableDefinition): string {
-    const coll = definition.name
-    return `${coll}:collMod:${JSON.stringify(definition.tableOptions || {})}`
+    const coll = definition.name;
+
+    const validator: any = {
+      $jsonSchema: {
+        bsonType: "object",
+        required: definition.columns
+          .filter(col => col.required)
+          .map(col => col.name),
+        properties: {},
+      }
+    };
+
+    for (const col of definition.columns) {
+      const prop: any = {
+        bsonType: this.mapType(col.type, col.elementType),
+      };
+
+      if (col.maxLength) prop.maxLength = col.maxLength;
+      if (col.minLength) prop.minLength = col.minLength;
+      if (col.minimum) prop.minimum = col.minimum;
+      if (col.maximum) prop.maximum = col.maximum;
+      if (col.allowed) prop.enum = col.allowed;
+      if (col.nullable === false) prop.nullable = false;
+      if (col.default) prop.default = col.default
+
+      validator.$jsonSchema.properties[col.name] = prop;
+    }
+
+    const options = {
+      validator,
+      validationLevel: "strict",
+      validationAction: "error",
+      ...definition.tableOptions
+    };
+
+    return `${coll}:collMod:${JSON.stringify(options)}`;
   }
 
   /**

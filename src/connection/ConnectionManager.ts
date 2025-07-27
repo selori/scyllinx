@@ -1,6 +1,10 @@
 import { ConnectionConfig, DatabaseConfig } from "@/types/index"
 import { Connection } from "./Connection"
 import { ScyllaDBDriver } from "@/drivers/ScyllaDBDriver"
+import { MongoDBDriver } from "@/drivers/MongoDBDriver"
+import { MySQLDriver } from "@/drivers/MySQLDriver"
+import { PostgreSQLDriver } from "@/drivers/PostgreSQLDriver"
+import { SQLiteDriver } from "@/drivers/SQLiteDriver"
 
 /**
  * Manages multiple database connections in a centralized manner.
@@ -113,6 +117,18 @@ export class ConnectionManager {
     switch (config.driver) {
       case "scylladb":
         driver = new ScyllaDBDriver(config)
+        break
+      case "mysql":
+        driver = new MySQLDriver(config)
+        break
+      case "postgresql":
+        driver = new PostgreSQLDriver(config)
+        break
+      case "sqlite":
+        driver = new SQLiteDriver(config)
+        break
+      case "mongodb":
+        driver = new MongoDBDriver(config)
         break
       default:
         throw new Error(`Unsupported database driver: ${config.driver}`)

@@ -16,7 +16,7 @@ export interface MigrationsConfig {
 }
 
 export interface ConnectionConfig {
-  driver: "scylladb" | "postgresql" | "mysql" | "sqlite"
+  driver: "scylladb" | "postgresql" | "mysql" | "sqlite" | 'mongodb'
   host?: string
   port?: number
   username?: string
@@ -97,6 +97,7 @@ export interface ColumnDefinition {
   name: string
   type: string
   nullable?: boolean
+  required?: boolean
   default?: any
   primary?: boolean
   unique?: boolean
@@ -109,6 +110,10 @@ export interface ColumnDefinition {
   scale?: any
   precision?: any
   unsigned?: any
+  minLength?: number
+  maxLength?: number
+  minimum?: number
+  maximum?: number
 }
 
 export interface TableDefinition {
@@ -116,7 +121,6 @@ export interface TableDefinition {
   columns: ColumnDefinition[]
   indexes?: IndexDefinition[]
   foreignKeys?: ForeignKeyDefinition[]
-  // ScyllaDB Specific
   partitionKeys: string[]
   clusteringKeys: string[]
   clusteringOrder: Record<string, "ASC" | "DESC">
