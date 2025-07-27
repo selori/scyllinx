@@ -57,6 +57,21 @@ export class ColumnBuilder {
   }
 
   /**
+   * Set a human-readable description for the field.
+   * This is useful for documentation or schema introspection tools.
+   *
+   * @param text - A brief description of the field's purpose.
+   * @returns The builder instance for chaining.
+   *
+   * @example
+   * column.string('email').description('The user\'s email address.')
+   */
+  comment(text: string): this {
+    this.column.comment = text
+    return this
+  }
+
+  /**
    * Add a UNIQUE constraint to the column.
    * @returns The builder instance for chaining.
    */
@@ -140,6 +155,49 @@ export class ColumnBuilder {
    */
   max(value: number): this {
     this.column.maximum = value
+    return this
+  }
+
+  /**
+   * Set a regular expression pattern constraint for a string field. (MongoDB Schema)
+   * Ensures that the value matches the given regex.
+   * 
+   * Applies only to string-based fields (e.g., text, varchar).
+   *
+   * @param regex - A string or RegExp representing the pattern to match.
+   * @returns The builder instance for chaining.
+   *
+   * @example
+   * column.string('email').pattern(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)
+   * 
+   * @example
+   * column.string('slug').pattern("^[a-z0-9-]+$")
+   */
+  pattern(regex: string | RegExp): this {
+    this.column.pattern = typeof regex === 'string' ? regex : regex.source
+    return this
+  }
+
+
+  /**
+   * Set a predefined format for the field. (MongoDB Schema)
+   * Formats are used for semantic validation (e.g., email, uri, date-time).
+   * 
+   * Common formats: `"email"`, `"uri"`, `"uuid"`, `"date"`, `"date-time"`, `"ipv4"`, `"ipv6"`, etc.
+   * 
+   * Format constraints are typically used in JSON Schema or validation libraries.
+   *
+   * @param format - A string representing the expected format.
+   * @returns The builder instance for chaining.
+   *
+   * @example
+   * column.string('email').format('email')
+   * 
+   * @example
+   * column.string('website').format('uri')
+   */
+  format(format: string): this {
+    this.column.format = format
     return this
   }
 

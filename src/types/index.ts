@@ -99,6 +99,7 @@ export interface ColumnDefinition {
   nullable?: boolean
   required?: boolean
   default?: any
+  comment?: string
   primary?: boolean
   unique?: boolean
   autoIncrement?: boolean
@@ -114,6 +115,8 @@ export interface ColumnDefinition {
   maxLength?: number
   minimum?: number
   maximum?: number
+  pattern?: string
+  format?: string
 }
 
 export interface TableDefinition {

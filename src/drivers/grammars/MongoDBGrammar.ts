@@ -380,6 +380,10 @@ export class MongoDBGrammar extends QueryGrammar {
       if (col.allowed) prop.enum = col.allowed;
       if (col.nullable === false) prop.nullable = false;
       if (col.default) prop.default = col.default
+      if (col.pattern) prop.default = col.pattern
+      if (col.format) prop.default = col.format
+      if (col.comment) prop.description = col.comment
+
 
       validator.$jsonSchema.properties[col.name] = prop;
     }
@@ -426,6 +430,9 @@ export class MongoDBGrammar extends QueryGrammar {
       if (col.allowed) prop.enum = col.allowed;
       if (col.nullable === false) prop.nullable = false;
       if (col.default) prop.default = col.default
+      if (col.pattern) prop.default = col.pattern
+      if (col.format) prop.default = col.format
+      if (col.comment) prop.description = col.comment
 
       validator.$jsonSchema.properties[col.name] = prop;
     }
