@@ -70,6 +70,11 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
   protected model?: new () => TModel
   protected connection?: string
 
+  // Cache
+  private cacheKey?: string
+  private cacheTtl?: number
+  private cacheStore?: string
+
   /**
    * Creates a new QueryBuilder instance. haha
    *
@@ -691,6 +696,13 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
     }
 
     return models
+  }
+
+  cache(key: string, ttl = 3600, store?: string): this {
+    this.cacheKey = key
+    this.cacheTtl = ttl
+    this.cacheStore = store
+    return this
   }
 
   /**

@@ -3,6 +3,23 @@ export interface DatabaseConfig {
   connections: Record<string, ConnectionConfig>
   pool?: PoolConfig
   migrations?: MigrationsConfig
+  cache?: Record<string, CacheConfig>
+}
+
+export interface CacheConfig {
+  driver: "redis" | "memory" | "file"
+  redis?: {
+    host: string
+    port: number
+    password?: string
+    db?: number
+  }
+  memory?: {
+    stdTTL: number
+    checkperiod: number
+  }
+  prefix?: string
+  ttl?: number
 }
 
 export interface PoolConfig {

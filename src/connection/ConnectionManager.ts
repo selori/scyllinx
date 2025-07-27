@@ -1,5 +1,6 @@
 import { ConnectionConfig, DatabaseConfig } from "@/types/index"
 import { Connection } from "./Connection"
+import { CacheManager } from "@/cache/CacheManager"
 
 /**
  * Manages multiple database connections in a centralized manner.
@@ -74,6 +75,13 @@ export class ConnectionManager {
     // Add each configured connection
     for (const [name, connConfig] of Object.entries(config.connections)) {
       await this.addConnection(name, connConfig)
+    }
+
+    if (config.cache) {
+      const cacheManager = CacheManager.getInstance()
+      for (const [name, cacheConfig] of Object.entries(config.cache)) {
+        cacheManager.addStore(name, cacheConfig)
+      }
     }
   }
 
