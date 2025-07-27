@@ -1,4 +1,3 @@
-import { Pool, QueryResult as PgQueryResult } from "pg"
 import { DatabaseDriver } from "./DatabaseDriver"
 import { PostgreSQLGrammar } from "./grammars/PostgreSQLGrammar"
 import { ConnectionConfig, PreparedStatement, QueryResult } from "@/types/index"
@@ -28,7 +27,7 @@ import { ConnectionConfig, PreparedStatement, QueryResult } from "@/types/index"
  */
 export class PostgreSQLDriver extends DatabaseDriver {
   /** PostgreSQL connection pool instance */
-  private pool!: Pool
+  private pool!: any // pg.Pool
 
   /** Query grammar for SQL compilation */
   private grammar: PostgreSQLGrammar
@@ -54,6 +53,8 @@ export class PostgreSQLDriver extends DatabaseDriver {
    * console.log('Connected to PostgreSQL');
    */
   async connect(): Promise<void> {
+    const { Pool } = await import("pg")
+
     this.pool = new Pool({
       host: this.config.host,
       port: this.config.port ?? 5432,
@@ -99,7 +100,7 @@ export class PostgreSQLDriver extends DatabaseDriver {
    */
   async query(sql: string, bindings: any[] = []): Promise<QueryResult> {
     try {
-      const result: PgQueryResult = await this.pool.query(sql, bindings)
+      const result = await this.pool.query(sql, bindings)
       return {
         rows: result.rows,
         rowCount: result.rowCount ? result.rowCount : 0,
@@ -248,7 +249,7 @@ class PgPreparedStatement implements PreparedStatement {
    * @param name - Unique statement name
    */
   constructor(
-    private pool: Pool,
+    private pool: any,
     private sql: string,
     private name: string,
   ) {}

@@ -1,4 +1,3 @@
-import { Client, types } from "cassandra-driver"
 import { DatabaseDriver } from "./DatabaseDriver"
 import { ScyllaDBGrammar } from "./grammars/ScyllaDBGrammar"
 import type { ConnectionConfig, PreparedStatement, QueryResult } from "@/types/index"
@@ -27,6 +26,7 @@ import type { ConnectionConfig, PreparedStatement, QueryResult } from "@/types/i
  * 
  */
 export class ScyllaDBDriver extends DatabaseDriver {
+  private cassandraModule: any
   /** ScyllaDB client instance */
   private client: any
 
@@ -60,6 +60,9 @@ export class ScyllaDBDriver extends DatabaseDriver {
    * 
    */
   async connect(): Promise<void> {
+    this.cassandraModule = await import("cassandra-driver")
+    const { Client, types } = this.cassandraModule
+
     const clientOptions = {
       contactPoints: [this.config.host || "localhost"],
       localDataCenter: this.config.localDataCenter || "datacenter1",
@@ -152,13 +155,13 @@ export class ScyllaDBDriver extends DatabaseDriver {
   async prepare(cql: string): Promise<PreparedStatement> {
     if (this.preparedStatements.has(cql)) {
       const prepared = this.preparedStatements.get(cql)
-      return new ScyllaDBPreparedStatement(this.client, prepared)
+      return new ScyllaDBPreparedStatement(this.client, prepared, this.cassandraModule.types)
     }
 
     const prepared = await this.client.execute(cql, { prepare: true })
     this.preparedStatements.set(cql, prepared)
 
-    return new ScyllaDBPreparedStatement(this.client, prepared)
+    return new ScyllaDBPreparedStatement(this.client, prepared, this.cassandraModule.types)
   }
 
   /**
@@ -182,7 +185,7 @@ export class ScyllaDBDriver extends DatabaseDriver {
 
     const result = await this.client.batch(batch, {
       prepare: true,
-      consistency: types.consistencies.localQuorum,
+      consistency: this.cassandraModule.types?.consistencies.localQuorum,
     })
 
     return {
@@ -337,6 +340,7 @@ export class ScyllaDBDriver extends DatabaseDriver {
     if (value === null || value === undefined) {
       return null
     }
+    const types = this.cassandraModule.types
 
     // Handle ScyllaDB-specific types
     if (value instanceof types.Uuid) {
@@ -380,8 +384,9 @@ class ScyllaDBPreparedStatement implements PreparedStatement {
    * @param prepared - The native prepared statement
    */
   constructor(
-    private client: Client,
+    private client: any,
     private prepared: any,
+    private types: any
   ) {}
 
   /**
@@ -399,7 +404,7 @@ class ScyllaDBPreparedStatement implements PreparedStatement {
    */
   async execute(bindings?: any[]): Promise<QueryResult> {
     const result = await this.client.execute(this.prepared, bindings || [], {
-      consistency: types.consistencies.localQuorum,
+      consistency: this.types.consistencies.localQuorum,
     })
 
     return {

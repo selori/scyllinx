@@ -1,4 +1,3 @@
-import mysql from "mysql2/promise"
 import { DatabaseDriver } from "./DatabaseDriver"
 import { MySQLGrammar } from "./grammars/MySQLGrammar"
 import type { ConnectionConfig, QueryResult, PreparedStatement } from "@/types/index"
@@ -26,7 +25,8 @@ import type { ConnectionConfig, QueryResult, PreparedStatement } from "@/types/i
  */
 export class MySQLDriver extends DatabaseDriver {
   /** MySQL connection instance */
-  protected mysqlConnection: mysql.Connection | null = null;
+  protected mysqlConnection: any | null = null;
+  private mysqlModule: any
 
   /** SQL grammar instance */
   private grammar: MySQLGrammar
@@ -48,7 +48,10 @@ export class MySQLDriver extends DatabaseDriver {
    * @throws {Error} When connection fails
    */
   async connect(): Promise<void> {
-    this.mysqlConnection = await mysql.createConnection({
+    this.mysqlModule = await import("mysql2/promise")
+    const { createConnection } = this.mysqlModule
+
+    this.mysqlConnection = await createConnection({
       host: this.config.host,
       port: this.config.port ?? 3306,
       user: this.config.username,
@@ -165,7 +168,7 @@ export class MySQLDriver extends DatabaseDriver {
    * // "'O\\'Reilly'"
    */
   escape(value: any): string {
-    return mysql.escape(value)
+    return this.mysqlModule.escape(value)
   }
 
   /**
@@ -217,7 +220,7 @@ class MySQLPreparedStatement implements PreparedStatement {
    *
    * @param statement - The raw mysql2 statement object
    */
-  constructor(private statement: mysql.PreparedStatementInfo) {}
+  constructor(private statement: any) {}
 
   /**
    * Executes the prepared statement.

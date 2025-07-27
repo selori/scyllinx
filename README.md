@@ -58,7 +58,6 @@ yarn add scyllinx
 | **PostgreSQL**        | 🧪 Beta  | pg                 |
 | **MySQL**             | 🧪 Beta  | mysql2             |
 | **MongoDB**           | 🧪 Beta  | mongodb            |
-| **Redis**             | 🧪 Beta  | key-value adapter  |
 
 
 ## 🚀 Quick Start

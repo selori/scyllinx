@@ -1,10 +1,5 @@
 import { ConnectionConfig, DatabaseConfig } from "@/types/index"
 import { Connection } from "./Connection"
-import { ScyllaDBDriver } from "@/drivers/ScyllaDBDriver"
-import { MongoDBDriver } from "@/drivers/MongoDBDriver"
-import { MySQLDriver } from "@/drivers/MySQLDriver"
-import { PostgreSQLDriver } from "@/drivers/PostgreSQLDriver"
-import { SQLiteDriver } from "@/drivers/SQLiteDriver"
 
 /**
  * Manages multiple database connections in a centralized manner.
@@ -72,13 +67,13 @@ export class ConnectionManager {
    * const defaultConn = manager.getConnection();          // uses config.default
    * const analyticsConn = manager.getConnection("report"); // uses named key
    */
-  public initialize(config: DatabaseConfig): void {
+  public async initialize(config: DatabaseConfig): Promise<void> {
     // Set the default connection name
     this.defaultConnection = config.default
 
     // Add each configured connection
     for (const [name, connConfig] of Object.entries(config.connections)) {
-      this.addConnection(name, connConfig)
+      await this.addConnection(name, connConfig)
     }
   }
 
@@ -107,7 +102,7 @@ export class ConnectionManager {
    * });
    * 
    */
-  public addConnection(name: string, config: ConnectionConfig): void {
+  public async addConnection(name: string, config: ConnectionConfig): Promise<void> {
     if (this.connections.has(name)) {
       throw new Error(`Connection '${name}' already exists`)
     }
@@ -116,18 +111,23 @@ export class ConnectionManager {
 
     switch (config.driver) {
       case "scylladb":
+        const { ScyllaDBDriver } = await import("@/drivers/ScyllaDBDriver")
         driver = new ScyllaDBDriver(config)
         break
       case "mysql":
+        const { MySQLDriver } = await import("@/drivers/MySQLDriver")
         driver = new MySQLDriver(config)
         break
       case "postgresql":
+        const { PostgreSQLDriver } = await import("@/drivers/PostgreSQLDriver")
         driver = new PostgreSQLDriver(config)
         break
       case "sqlite":
+        const { SQLiteDriver } = await import("@/drivers/SQLiteDriver")
         driver = new SQLiteDriver(config)
         break
       case "mongodb":
+        const { MongoDBDriver } = await import("@/drivers/MongoDBDriver")
         driver = new MongoDBDriver(config)
         break
       default:

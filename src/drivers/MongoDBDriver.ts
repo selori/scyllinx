@@ -1,4 +1,3 @@
-import { MongoClient, type Db, type Collection } from "mongodb"
 import { DatabaseDriver } from "./DatabaseDriver"
 import { MongoDBGrammar } from "./grammars/MongoDBGrammar"
 import { ConnectionConfig, PreparedStatement, QueryResult } from "@/types"
@@ -10,8 +9,9 @@ import { ConnectionConfig, PreparedStatement, QueryResult } from "@/types"
  * @extends DatabaseDriver
  */
 export class MongoDBDriver extends DatabaseDriver {
-  private client!: MongoClient
-  private db!: Db
+  private mongoModule: any
+  private client!: InstanceType<any>
+  private db!: InstanceType<any>
   private grammar: MongoDBGrammar
 
   /**
@@ -31,6 +31,9 @@ export class MongoDBDriver extends DatabaseDriver {
    * @returns Promise<void>
    */
   async connect(): Promise<void> {
+    this.mongoModule = await import("mongodb")
+    const { MongoClient } = this.mongoModule
+
     const uri = this.buildConnectionUri()
     this.client = new MongoClient(uri, {
       maxPoolSize: this.config.maxPoolSize || 10,
@@ -279,7 +282,7 @@ export class MongoDBDriver extends DatabaseDriver {
    * @param name - Collection name.
    * @returns Collection
    */
-  public getCollection(name: string): Collection {
+  public getCollection(name: string): InstanceType<typeof this.mongoModule.Collection>  {
     return this.db.collection(name)
   }
 

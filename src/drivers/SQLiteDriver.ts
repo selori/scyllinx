@@ -1,15 +1,14 @@
 import { DatabaseDriver } from "./DatabaseDriver"
 import { SQLiteGrammar } from "./grammars/SQLiteGrammar"
 import type { QueryGrammar } from "./grammars/QueryGrammar"
-import type BetterSqlite3 from "better-sqlite3"
-import sqlite3 from "better-sqlite3"
 import { ConnectionConfig, PreparedStatement, QueryResult } from "@/types"
 
 /**
  * SQLite driver implementation using better-sqlite3.
  */
 export class SQLiteDriver extends DatabaseDriver {
-  private db: BetterSqlite3.Database | null = null
+  private sqliteModule: any
+  private db: any | null = null
   private grammar: SQLiteGrammar
   private transactionLevel = 0
 
@@ -35,6 +34,9 @@ export class SQLiteDriver extends DatabaseDriver {
    * ```
    */
   async connect(): Promise<void> {
+    this.sqliteModule = await import("better-sqlite3")
+    const sqlite3 = this.sqliteModule.default
+
     const dbPath = this.config.database || ":memory:"
     this.db = new sqlite3(dbPath, {
       verbose: this.config.verbose ? console.log : undefined,
@@ -196,9 +198,9 @@ export class SQLiteDriver extends DatabaseDriver {
 }
 
 class SQLitePreparedStatement implements PreparedStatement {
-  private stmt: BetterSqlite3.Statement
+  private stmt: any
 
-  constructor(db: BetterSqlite3.Database, sql: string) {
+  constructor(db: any, sql: string) {
     this.stmt = db.prepare(sql)
   }
 

@@ -21,7 +21,7 @@ async function main() {
     options: {}
   }
 
-  connManager.addConnection("default", connectionConfig)
+  await connManager.addConnection("default", connectionConfig)
   const connection = connManager.getConnection()
   
   try {
