@@ -1,6 +1,6 @@
 {
   "name": "scyllinx",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "A modern TypeScript ORM for ScyllaDB and SQL databases with Laravel-inspired syntax",
   "main": "dist/cjs/index.min.js",
   "module": "dist/esm/index.min.js",
@@ -13,7 +13,7 @@
     },
     "./package.json": "./package.json",
     "./*": "./dist/*"
-},
+  },
   "scripts": {
     "build": "npm run clean && rollup -c",
     "build:prod": "npm run clean && rollup -c",
