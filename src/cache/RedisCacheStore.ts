@@ -1,23 +1,31 @@
-import Redis from "redis"
 import { CacheStore } from "./CacheStore"
 
 export class RedisCacheStore implements CacheStore {
   private client: any
   private prefix: string
+  private redisModule: typeof import("redis") | null = null
+
+  private config: Record<string, any>
 
   constructor(config: Record<string, any> = {}, prefix = "") {
     this.prefix = prefix
-    this.client = Redis.createClient({
-      socket: {
-        host: config.host || "localhost",
-        port: config.port || 6379,
-      },
-      password: config.password,
-      database: config.db || 0,
-    })
+    this.config = config
   }
 
   async connect(): Promise<void> {
+    if (!this.redisModule) {
+      this.redisModule = await import("redis")
+    }
+
+    this.client = this.redisModule.createClient({
+      socket: {
+        host: this.config.host || "localhost",
+        port: this.config.port || 6379,
+      },
+      password: this.config.password,
+      database: this.config.db || 0,
+    })
+
     await this.client.connect()
   }
 

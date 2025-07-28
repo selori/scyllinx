@@ -1,17 +1,23 @@
-import NodeCache from "node-cache"
 import { CacheStore } from "./CacheStore"
 
 export class MemoryCacheStore implements CacheStore {
-  private cache: NodeCache
+  private cache: any // NodeCache tipi dinamik import sonrası geliyor
+  private config: Record<string, any>
+  private nodeCacheModule: any = null
 
   constructor(config: Record<string, any> = {}) {
-    this.cache = new NodeCache({
-      stdTTL: config.stdTTL || 600,
-      checkperiod: config.checkperiod || 120,
-    })
+    this.config = config
   }
-  connect(): Promise<void> {
-    throw new Error("Method not implemented.")
+
+  async connect(): Promise<void> {
+    if (!this.nodeCacheModule) {
+      this.nodeCacheModule = await import("node-cache")
+    }
+    this.cache = new this.nodeCacheModule.default({
+      stdTTL: this.config.stdTTL || 600,
+      checkperiod: this.config.checkperiod || 120,
+    })
+    return Promise.resolve()
   }
 
   async get(key: string): Promise<any> {

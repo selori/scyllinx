@@ -165,14 +165,14 @@ export class ConnectionManager {
    * 
    */
   public getConnection(name?: string): Connection {
-    const connectionName = name || this.defaultConnection
-    const connection = this.connections.get(connectionName)
+    const connectionName = (name === 'default' || !name) ? this.defaultConnection : name;
+    const connection = this.connections.get(connectionName);
 
     if (!connection) {
-      throw new Error(`Connection '${connectionName}' not found`)
+      throw new Error(`Connection '${connectionName}' not found`);
     }
 
-    return connection
+    return connection;
   }
 
   /**
