@@ -15,11 +15,8 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "npm run clean && rollup -c",
     "build:prod": "npm run clean && rollup -c",
-    "build:cjs": "tsc -p tsconfig.cjs.json && node scripts/fix-paths.js dist",
-    "build:esm": "tsc -p tsconfig.esm.json && node scripts/fix-paths.js dist/esm && node scripts/fix-esm.js",
-    "build:types": "tsc -p tsconfig.types.json",
     "clean": "node scripts/clean.js",
     "dev": "tsc --watch",
     "test": "jest",
