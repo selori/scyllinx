@@ -1,6 +1,6 @@
 {
   "name": "scyllinx",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A modern TypeScript ORM for ScyllaDB and SQL databases with Laravel-inspired syntax",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
