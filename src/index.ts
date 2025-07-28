@@ -1,3 +1,4 @@
+export { CacheManager } from "./cache/CacheManager"
 export { Connection } from "./connection/Connection"
 export { ConnectionManager } from "./connection/ConnectionManager"
 

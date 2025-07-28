@@ -22,7 +22,11 @@ export class RedisCacheStore implements CacheStore {
   }
 
   async get(key: string): Promise<any> {
-    const value = await this.client.get(this.prefixKey(key))
+    const raw = await this.client.get(this.prefixKey(key))
+
+    // Buffer ise string'e çevir
+    const value = typeof raw === "string" ? raw : raw?.toString?.("utf-8")
+
     return value ? JSON.parse(value) : undefined
   }
 

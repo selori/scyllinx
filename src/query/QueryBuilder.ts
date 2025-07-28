@@ -4,6 +4,7 @@ import { ConnectionManager } from "../connection/ConnectionManager"
 import type { WhereClause } from "@/types"
 import type { Model } from "@/model/Model"
 import type { Relationship } from "@/relationships/Relationship"
+import { CacheManager } from "@/cache/CacheManager"
 
 type Operator = "=" | "!=" | "<" | "<=" | ">" | ">=" | "in"
 type EagerLoadRelations<TModel extends Model<any>> = Record<string, (query: QueryBuilder<any, any>) => void>
@@ -21,7 +22,7 @@ type EagerLoadRelations<TModel extends Model<any>> = Record<string, (query: Quer
  * @template TAttrs - The attributes/columns available for this model
  *
  * @example
- * 
+ *
  * // Basic usage
  * const users = await new QueryBuilder('users')
  *   .where('active', true)
@@ -82,7 +83,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
    * @param connection - Optional connection name to use
    *
    * @example
-   * 
+   *
    * const qb = new QueryBuilder('users');
    * const qbWithConn = new QueryBuilder('users', 'analytics');
    * ```
@@ -104,7 +105,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
    * @returns QueryBuilder instance for method chaining
    *
    * @example
-   * 
+   *
    * const query = new QueryBuilder('users').setModel(User);
    * const users = await query.get(); // Returns User instances
    * ```
@@ -122,7 +123,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
    * @returns QueryBuilder instance for method chaining
    *
    * @example
-   * 
+   *
    * // Select specific columns
    * query.select('id', 'name', 'email');
    *
@@ -142,7 +143,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
    * @returns QueryBuilder instance for method chaining
    *
    * @example
-   * 
+   *
    * query.select('id', 'name')
    *      .addSelect('email', 'created_at');
    * ```
@@ -171,7 +172,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
    * @returns QueryBuilder instance for method chaining
    *
    * @example
-   * 
+   *
    * // Basic equality
    * query.where('status', 'active');
    *
@@ -233,7 +234,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
    * @returns QueryBuilder instance for method chaining
    *
    * @example
-   * 
+   *
    * query.where('status', 'active')
    *      .orWhere('priority', 'high');
    * ```
@@ -270,7 +271,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
    * @returns QueryBuilder instance for method chaining
    *
    * @example
-   * 
+   *
    * query.whereIn('status', ['active', 'pending', 'verified']);
    * query.whereIn('id', [1, 2, 3, 4, 5]);
    * ```
@@ -293,7 +294,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
    * @returns QueryBuilder instance for method chaining
    *
    * @example
-   * 
+   *
    * query.whereNotIn('status', ['deleted', 'banned']);
    * ```
    */
@@ -315,7 +316,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
    * @returns QueryBuilder instance for method chaining
    *
    * @example
-   * 
+   *
    * query.whereBetween('age', [18, 65]);
    * query.whereBetween('created_at', [startDate, endDate]);
    * ```
@@ -337,7 +338,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
    * @returns QueryBuilder instance for method chaining
    *
    * @example
-   * 
+   *
    * query.whereNull('deleted_at');
    * ```
    */
@@ -357,7 +358,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
    * @returns QueryBuilder instance for method chaining
    *
    * @example
-   * 
+   *
    * query.whereNotNull('email_verified_at');
    * ```
    */
@@ -380,7 +381,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
    * @returns QueryBuilder instance for method chaining
    *
    * @example
-   * 
+   *
    * query.join('profiles', 'users.id', '=', 'profiles.user_id');
    * ```
    */
@@ -405,7 +406,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
    * @returns QueryBuilder instance for method chaining
    *
    * @example
-   * 
+   *
    * query.leftJoin('profiles', 'users.id', '=', 'profiles.user_id');
    * ```
    */
@@ -430,7 +431,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
    * @returns QueryBuilder instance for method chaining
    *
    * @example
-   * 
+   *
    * query.rightJoin('profiles', 'users.id', '=', 'profiles.user_id');
    * ```
    */
@@ -453,7 +454,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
    * @returns QueryBuilder instance for method chaining
    *
    * @example
-   * 
+   *
    * query.orderBy('created_at', 'desc');
    * query.orderBy('name'); // defaults to 'asc'
    * ```
@@ -473,7 +474,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
    * @returns QueryBuilder instance for method chaining
    *
    * @example
-   * 
+   *
    * query.groupBy('department', 'status');
    * ```
    */
@@ -491,7 +492,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
    * @returns QueryBuilder instance for method chaining
    *
    * @example
-   * 
+   *
    * query.groupBy('department')
    *      .having('count(*)', '>', 5);
    * ```
@@ -520,7 +521,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
    * @returns QueryBuilder instance for method chaining
    *
    * @example
-   * 
+   *
    * query.limit(10); // Get only 10 results
    * ```
    */
@@ -536,7 +537,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
    * @returns QueryBuilder instance for method chaining
    *
    * @example
-   * 
+   *
    * query.offset(20); // Skip first 20 results
    * ```
    */
@@ -574,7 +575,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
    * @returns QueryBuilder instance for method chaining
    *
    * @example
-   * 
+   *
    * query.where('non_indexed_column', 'value')
    *      .allowFiltering(); // Required for non-indexed columns
    * ```
@@ -591,7 +592,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
    * @returns QueryBuilder instance for method chaining
    *
    * @example
-   * 
+   *
    * query.ttl(3600).insert(data); // Data expires in 1 hour
    * ```
    */
@@ -606,7 +607,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
    * @returns QueryBuilder instance for method chaining
    *
    * @example
-   * 
+   *
    * query.ifNotExists().insert(data); // Only insert if doesn't exist
    * ```
    */
@@ -624,7 +625,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
    * @returns QueryBuilder instance for method chaining
    *
    * @example
-   * 
+   *
    * query.if('version', '=', 1).update(data); // Only update if version is 1
    * ```
    */
@@ -648,7 +649,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
    * @returns QueryBuilder instance for method chaining
    *
    * @example
-   * 
+   *
    * query.whereToken(['user_id'], '>', [1000]);
    * ```
    */
@@ -672,13 +673,58 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
    * @returns Promise resolving to array of results
    *
    * @example
-   * 
+   *
    * const users = await User.query()
    *   .where('active', true)
    *   .get();
    * ```
    */
   public async get(): Promise<TModel[]> {
+    const sql = this.grammar.compileSelect(this.toBase())
+    const params = this.getParams()
+    const result = await this.driver.query(sql, params)
+
+    if (this.cacheTtl) {
+      const key = this.cacheKey ?? JSON.stringify({ sql: this.toSql(), params })
+      const cacheManager = CacheManager.getInstance()
+
+      let rawRows = await cacheManager.remember(
+        key,
+        this.cacheTtl,
+        async () => result.rows,
+        this.cacheStore
+      )
+
+      let models: TModel[]
+      if (this.model) {
+        models = rawRows.map((row: any) => this.hydrate(row))
+      } else {
+        models = rawRows
+      }
+
+      if (this.eager.length) {
+        await Promise.all(models.map((m) => this.loadEagerFor(m, this.eager)))
+      }
+
+      return models
+    }
+
+    // if no cache
+    let models: TModel[]
+    if (this.model) {
+      models = result.rows.map((row) => this.hydrate(row))
+    } else {
+      models = result.rows
+    }
+
+    if (this.eager.length) {
+      await Promise.all(models.map((m) => this.loadEagerFor(m, this.eager)))
+    }
+
+    return models
+  }
+
+  public async execute(): Promise<TModel[]> {
     const sql = this.grammar.compileSelect(this.toBase())
     const params = this.getParams()
 
@@ -698,9 +744,14 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
     return models
   }
 
-  cache(key: string, ttl = 3600, store?: string): this {
-    this.cacheKey = key
+  /**
+   * Enable caching for this query.
+   * @param ttl seconds to live
+   * @param store optional cache store name
+   */
+  public cache(ttl: number, key?: string, store?: string): this {
     this.cacheTtl = ttl
+    this.cacheKey = key
     this.cacheStore = store
     return this
   }
@@ -713,7 +764,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
    * @returns QueryBuilder instance for method chaining
    *
    * @example
-   * 
+   *
    * const users = await User.query()
    *   .with('posts', 'profile')
    *   .get();
@@ -738,7 +789,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
    * @param relations - Array of relationship names to load
    *
    * @example
-   * 
+   *
    * await query.loadEagerFor(user, ['posts', 'profile']);
    * await query.loadEagerFor(user, ['posts.comments']);
    * ```
@@ -763,7 +814,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
    * @returns Promise resolving to first result or null if none found
    *
    * @example
-   * 
+   *
    * const user = await User.query()
    *   .where('email', 'john@example.com')
    *   .first();
@@ -781,7 +832,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
    * @returns Promise resolving to count number
    *
    * @example
-   * 
+   *
    * const userCount = await User.query()
    *   .where('active', true)
    *   .count();
@@ -804,7 +855,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
    * @returns Promise resolving to boolean
    *
    * @example
-   * 
+   *
    * const hasActiveUsers = await User.query()
    *   .where('active', true)
    *   .exists();
@@ -823,7 +874,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
    * @returns Promise resolving to boolean indicating success
    *
    * @example
-   * 
+   *
    * // Single insert
    * await query.insert({
    *   name: 'John Doe',
@@ -879,7 +930,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
    * @returns Promise resolving to the generated ID
    *
    * @example
-   * 
+   *
    * const userId = await query.insertGetId({
    *   name: 'John Doe',
    *   email: 'john@example.com'
@@ -898,7 +949,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
    * @returns Promise resolving to number of affected rows
    *
    * @example
-   * 
+   *
    * const updated = await User.query()
    *   .where('active', false)
    *   .update({ status: 'inactive' });
@@ -932,7 +983,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
    * @returns Promise resolving to boolean indicating success
    *
    * @example
-   * 
+   *
    * await query.updateOrInsert(
    *   { email: 'john@example.com' },
    *   { name: 'John Doe', active: true }
@@ -951,7 +1002,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
 
   /**
    * Deletes records matching the current query conditions.
-   * 
+   *
    * If the model uses soft deletes (`static softDeletes = true`), this method
    * will perform an UPDATE setting the `deleted_at` timestamp instead of a hard delete.
    *
@@ -983,7 +1034,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
     //     updates: [{ column, value: '?' }],
     //     ifConditions: this._ifConditions,
     //   })
-    //   const params = [ now, 
+    //   const params = [ now,
     //     ...this.getWhereParams(this._wheres),
     //     ...this.getWhereParams(this._ifConditions),
     //   ]
@@ -1010,7 +1061,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
    * Truncates the entire table, removing all records.
    *
    * @example
-   * 
+   *
    * await query.truncate(); // Removes all records from table
    * ```
    */
@@ -1126,7 +1177,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
    * @returns New QueryBuilder instance with copied state
    *
    * @example
-   * 
+   *
    * const baseQuery = User.query().where('active', true);
    * const adminQuery = baseQuery.clone().where('role', 'admin');
    * const userQuery = baseQuery.clone().where('role', 'user');
@@ -1161,7 +1212,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
    * @returns SQL/CQL query string
    *
    * @example
-   * 
+   *
    * const sql = User.query()
    *   .where('active', true)
    *   .toSql();
@@ -1179,7 +1230,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
    * @returns SQL/CQL query string with values
    *
    * @example
-   * 
+   *
    * const sql = User.query()
    *   .where('active', true)
    *   .toRawSql();

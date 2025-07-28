@@ -47,23 +47,23 @@ export class CacheManager {
   }
 
   async get(key: string, store?: string): Promise<any> {
-    return this.getStore(store).get(key)
+    return await this.getStore(store).get(key)
   }
 
   async set(key: string, value: any, ttl?: number, store?: string): Promise<void> {
-    return this.getStore(store).set(key, value, ttl)
+    return await this.getStore(store).set(key, value, ttl)
   }
 
   async forget(key: string, store?: string): Promise<void> {
-    return this.getStore(store).forget(key)
+    return await this.getStore(store).forget(key)
   }
 
   async flush(store?: string): Promise<void> {
-    return this.getStore(store).flush()
+    return await this.getStore(store).flush()
   }
 
   async remember<T>(key: string, ttl: number, callback: () => Promise<T>, store?: string): Promise<T> {
-    return this.getStore(store).remember(key, ttl, callback)
+    return await this.getStore(store).remember(key, ttl, callback)
   }
 
   tags(tags: string[]): TaggedCache {

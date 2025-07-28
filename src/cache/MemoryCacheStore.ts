@@ -10,6 +10,9 @@ export class MemoryCacheStore implements CacheStore {
       checkperiod: config.checkperiod || 120,
     })
   }
+  connect(): Promise<void> {
+    throw new Error("Method not implemented.")
+  }
 
   async get(key: string): Promise<any> {
     return this.cache.get(key)

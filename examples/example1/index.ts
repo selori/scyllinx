@@ -1,5 +1,5 @@
 // index.ts
-import { ConnectionManager, MigrationManager, ModelRegistry, SeederRunner } from "../../src"
+import { CacheManager, ConnectionManager, MigrationManager, ModelRegistry, SeederRunner } from "../../src"
 import { CreateCategoriesTable, CreateCommentsTable, CreatePostsTable, CreatePostTagTable, CreateTagsTable, CreateUsersTable } from "./migrations"
 import { DatabaseSeeder } from "./seeders/DatabaseSeeder"
 import { User } from "./models/User"
@@ -23,6 +23,12 @@ async function main() {
 
   await connManager.addConnection("default", connectionConfig)
   const connection = connManager.getConnection()
+
+  const cacheManager = CacheManager.getInstance()
+  cacheManager.addStore('redis', {
+    driver: 'redis',
+  })
+  await cacheManager.getStore('redis').connect()
   
   try {
     console.log('Bağlanıyor...')
@@ -88,8 +94,8 @@ async function main() {
 
     // 2. Bir kullanıcının tüm postlarını getir
     const user = await User.query().first()
-    const u1 = await User.query().with('posts', 'posts.comments', 'posts.comments.user').first()
-    if (u1) console.log('KOMPLEKS QUERY WİTH RELATIONSHIPS', u1.toJSON())
+    const u1 = await User.query().with('posts', 'posts.comments', 'posts.comments.user').cache(60).first()
+    if (u1) console.log('KOMPLEKS QUERY WİTH RELATIONSHIPS', typeof u1, u1)
     if (user) {
       const userPosts = await user.postsRelation().get()
       const post = await userPosts[0].load('user')
