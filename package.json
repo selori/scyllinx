@@ -2,14 +2,14 @@
   "name": "scyllinx",
   "version": "1.0.5",
   "description": "A modern TypeScript ORM for ScyllaDB and SQL databases with Laravel-inspired syntax",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
+  "main": "dist/cjs/index.min.js",
+  "module": "dist/esm/index.min.js",
   "types": "dist/types/index.d.ts",
   "type": "module",
   "exports": {
     ".": {
-      "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.js",
+      "import": "./dist/esm/index.min.js",
+      "require": "./dist/cjs/index.min.js",
       "types": "./dist/index.d.ts"
     },
     "./package.json": "./package.json"
