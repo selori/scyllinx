@@ -3,8 +3,16 @@ import commonjs from '@rollup/plugin-commonjs'
 import resolve from '@rollup/plugin-node-resolve'
 import alias from '@rollup/plugin-alias'
 import json from '@rollup/plugin-json'
+import terser from '@rollup/plugin-terser'
+import { visualizer } from 'rollup-plugin-visualizer'
 import path from "path"
 import { fileURLToPath } from 'url'
+import pkg from './package.json' assert { type: 'json' }
+
+const external = [
+  ...Object.keys(pkg.dependencies || {}),
+  ...Object.keys(pkg.peerDependencies || {}),
+]
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -26,21 +34,24 @@ export default [
         output: {
             dir: 'dist/esm',
             format: 'esm',
-            sourcemap: true,
+            sourcemap: false,
             // preserveModules: true,
-            entryFileNames: '[name].js'
+            entryFileNames: '[name].min.js',
+            
         },
         plugins: [
             aliases,
-            resolve(),
+            resolve({preferBuiltins: true}),
             commonjs(),
             json(),
             typescript({
                 tsconfig: './tsconfig.build.json',
                 useTsconfigDeclarationDir: true
-            })
+            }),
+            terser(),
+            visualizer({ open: true }),
         ],
-        external: []
+        external
     },
     // Commonjs Build
     {
@@ -48,20 +59,22 @@ export default [
         output: {
             dir: 'dist/cjs',
             format: 'cjs',
-            sourcemap: true,
+            sourcemap: false,
             // preserveModules: true,
-            entryFileNames: '[name].js'
+            entryFileNames: '[name].min.js',
         },
         plugins: [
             aliases,
-            resolve(),
+            resolve({preferBuiltins: true}),
             commonjs(),
             json(),
             typescript({
                 tsconfig: './tsconfig.build.json',
                 useTsconfigDeclarationDir: false
-            })
+            }),
+            terser(),
+            visualizer({ open: true }),
         ],
-        external: []
+        external
     }
 ]
