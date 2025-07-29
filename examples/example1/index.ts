@@ -1,5 +1,5 @@
 // index.ts
-import { CacheManager, ConnectionManager, MigrationManager, ModelRegistry, SeederRunner } from "../../src"
+import { CacheManager, ConnectionManager, MigrationManager, ModelRegistry, ObserverRegistry, SeederRunner } from "../../src"
 import { CreateCategoriesTable, CreateCommentsTable, CreatePostsTable, CreatePostTagTable, CreateTagsTable, CreateUsersTable } from "./migrations"
 import { DatabaseSeeder } from "./seeders/DatabaseSeeder"
 import { User } from "./models/User"
@@ -7,6 +7,7 @@ import { Post } from "./models/Post"
 import { Comment } from "./models/Comment"
 import { Category } from "./models/Category"
 import { Tag } from "./models/Tag"
+import { UserObserver } from "./observers/UserObserver"
 
 async function main() {
   // Bağlantıyı kur
@@ -42,6 +43,11 @@ async function main() {
       .register("Comment", Comment)
       .register("Category", Category)
       .register("Tag", Tag)
+
+    // 5. Setup Observers
+  console.log("5. Setting up observers...")
+  const observerRegistry = ObserverRegistry.getInstance()
+  observerRegistry.register("User", new UserObserver())
 
     // console.log((await connection.query('DROP TABLE IF EXISTS migrations')))
     // console.log((await connection.query('DROP TABLE IF EXISTS users')))

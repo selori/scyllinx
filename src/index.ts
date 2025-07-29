@@ -28,6 +28,7 @@ export { MorphOne } from "./relationships/MorphOne"
 export { MorphMany } from "./relationships/MorphMany"
 export { MorphTo } from "./relationships/MorphTo"
 
+export { ModelObserver, ObserverRegistry } from "./observers/ModelObserver"
 
 export * from "./decorators"
 export * from "./types"

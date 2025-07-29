@@ -7,6 +7,9 @@ import { MorphOne } from "@/relationships/MorphOne"
 import { MorphTo } from "@/relationships/MorphTo"
 import { QueryBuilder } from "../query/QueryBuilder"
 import util from "util"
+import { ModelEvent } from "@/types"
+import { EventDispatcher } from "@/observers/EventDispather"
+import { ObserverRegistry } from "@/observers/ModelObserver"
 
 /**
  * Type helper to infer model attributes from Model class.
@@ -442,7 +445,7 @@ export class Model<TAttrs extends Record<string, any>> {
 
       if (this.isDirty()) {
         await this.performUpdate(query)
-        this.fireModelEvent("updated", false)
+        await this.fireModelEvent("updated")
       }
     } else {
       // Create new model
@@ -453,11 +456,11 @@ export class Model<TAttrs extends Record<string, any>> {
       await this.performInsert(query)
       this.exists = true
       this.wasRecentlyCreated = true
-      this.fireModelEvent("created", false)
+      await this.fireModelEvent("created")
     }
 
     this.finishSave()
-    this.fireModelEvent("saved", false)
+    await this.fireModelEvent("saved")
 
     return true
   }
@@ -508,7 +511,7 @@ export class Model<TAttrs extends Record<string, any>> {
 
     await this.performDeleteOnModel()
     this.exists = false
-    this.fireModelEvent("deleted", false)
+    await this.fireModelEvent("deleted")
 
     return true
   }
@@ -902,6 +905,26 @@ export class Model<TAttrs extends Record<string, any>> {
   }
 
   /**
+   * Returns the original value of an attribute, or all original attributes if no key is given.
+   *
+   * @template K - The attribute key type
+   * @param key - (Optional) The attribute key to get the original value of
+   * @returns The original value of the attribute, or all original attributes
+   *
+   * @example
+   * const user = await User.find('123');
+   * user.name = 'Updated';
+   * console.log(user.getOriginal('name')); // 'Old Name'
+   * console.log(user.getOriginal()); // { id: '123', name: 'Old Name', ... }
+   */
+  public getOriginal<K extends keyof TAttrs>(key?: K): TAttrs[K] | Partial<TAttrs> | undefined {
+    if (key) {
+      return this.original[key];
+    }
+    return { ...this.original };
+  }
+
+  /**
    * Converts the model to a plain object.
    * Applies visibility rules (hidden/visible attributes).
    *
@@ -1255,14 +1278,19 @@ export class Model<TAttrs extends Record<string, any>> {
    *
    * @protected
    * @param event - Event name to fire
-   * @param halt - Whether to halt on false return
    * @returns Promise resolving to event result
    */
-  protected async fireModelEvent(event: string, halt = true): Promise<boolean | void> {
-    const eventName = `scyllinx.${event}: ${this.constructor.name}`
-    console.log("Method not implemented", "for debug", eventName)
+  protected async fireModelEvent(event: string): Promise<boolean> {
+    const modelEvent: ModelEvent = {
+      type: event as any,
+      model: this,
+      attributes: this.attributes,
+    }
+    await EventDispatcher.getInstance().dispatch(modelEvent)
+    await ObserverRegistry.getInstance().notify(modelEvent)
     return true
   }
+
 
   /**
    * Finalizes the save operation by syncing state.

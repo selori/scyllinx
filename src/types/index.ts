@@ -182,3 +182,21 @@ export interface TableOptions {
   additional_write_policy?: string;
   [key: string]: any; // opsiyonel olarak genişletilebilir
 }
+
+export interface ModelEvent {
+  type:
+    | "creating"
+    | "created"
+    | "updating"
+    | "updated"
+    | "saving"
+    | "saved"
+    | "deleting"
+    | "deleted"
+    | "restoring"
+    | "restored"
+  model: any
+  attributes?: Record<string, any>
+}
+
+export type EventListener = (event: ModelEvent) => Promise<void> | void
