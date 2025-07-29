@@ -3,11 +3,21 @@ import fs from "fs";
 import path from "path";
 import jsdoc2md from "jsdoc-to-markdown";
 import { execSync } from "child_process";
+import { rm } from 'fs/promises';
+
+async function clean(directory) {
+  try {
+    await rm(directory, { recursive: true, force: true });
+    console.log(directory, ' klasörü silindi.');
+  } catch (err) {
+    console.error('Silme hatası:', err);
+  }
+}
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const distPath = path.resolve(__dirname, "../dist");
+const distPath = path.resolve(__dirname, "../api-dist");
 const docsPath = path.resolve(__dirname, "../docs/api");
 const templatePath = path.resolve(__dirname, "template.hbs");
 
@@ -53,3 +63,5 @@ for (const file of jsFiles) {
 // });
 
 console.log("✅ Markdown API docs generated to /docs/api");
+console.log('Cleaning api-dist directory')
+clean('api-dist')

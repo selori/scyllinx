@@ -13,7 +13,7 @@ Outputs string directives like &quot;collection:operation:payload&quot; to be in
 
 
 
-## compileSelect
+## compileFindSelect
 
 
 Converts a SQL-like SELECT into a MongoDB find directive.
@@ -29,6 +29,47 @@ Converts a SQL-like SELECT into a MongoDB find directive.
 
 
   `returnsstring` — - Directive string &quot;collection:find:{filter,options}&quot;.
+
+
+
+## compileAggregateSelect
+
+
+Compiles a SQL-like aggregate SELECT into MongoDB aggregation pipeline.
+
+Supports WHERE, GROUP BY, aggregation functions (count, sum, avg, min, max),
+projections, order, limit, offset, and HAVING-like post-filters.
+
+
+### Parameters
+
+| Name | Description |
+|------|-------------|
+| `query` | Query components including columns, wheres, groupBy, aggregates, etc. |
+
+
+
+
+  `returnsstring` — - Directive string in the form &quot;collection:aggregate:[pipeline]&quot;
+
+
+
+## compileAggregateExpressions
+
+
+Parses SQL-like aggregate expressions and compiles into MongoDB accumulators.
+
+
+### Parameters
+
+| Name | Description |
+|------|-------------|
+| `columns` | Array of column expressions like [&#x27;count(id)&#x27;, &#x27;sum(amount)&#x27;] |
+
+
+
+
+  `returns` — Object mapping output field names to MongoDB accumulator expressions
 
 
 

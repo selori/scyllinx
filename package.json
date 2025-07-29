@@ -17,7 +17,7 @@
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
-    "docs:api": "node scripts/jsdoc-to-md.js",
+    "docs:api": "tsc -p tsconfig.api.json && node scripts/jsdoc-to-md.js",
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix",
     "format": "prettier --write \"src/**/*.ts\"",

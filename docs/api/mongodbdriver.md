@@ -82,21 +82,31 @@ Closes the MongoDB connection and clears the reference.
 ## query
 
 
-Executes a MongoDB operation encoded as a string directive.
-Parses collection, method, and parameters, then dispatches the call.
+Parses a directive string in the format &quot;collection:method:payload&quot;,
+optionally bypassing JSON parsing when &#x60;raw&#x60; is true.
 
 
 ### Parameters
 
 | Name | Description |
 |------|-------------|
-| `operation` | Directive in the format &quot;collection:method&quot;. |
-| `params` | Parameters object or payload for the operation. |
+| `operation` | The directive string, typically in &quot;collection:method:payload&quot; format. |
+| `operationPayload` | Optional pre-parsed payload used only when &#x60;raw&#x60; is true. |
+| `raw` | Optional flag to bypass JSON parsing and use &#x60;operationPayload&#x60; directly. |
+
+### Example
+
+```typescript
+// Normal directive with JSON payload:
+driver.query("users:find:{\"active\":true}")
+
+// Raw directive with pre-parsed payload:
+driver.query("users:insertOne", { name: "Ali" }, true)
+```
 
 
 
-
-  `returns` — Promise&lt;QueryResult&gt;
+  `returns` — Promise resolving to query results with mapped rows
 
 
 

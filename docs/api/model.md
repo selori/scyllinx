@@ -514,6 +514,33 @@ model.setOriginal({ id: '123', name: 'John' });
 
 
 
+## getOriginal
+
+
+Returns the original value of an attribute, or all original attributes if no key is given.
+
+
+### Parameters
+
+| Name | Description |
+|------|-------------|
+| `key` | (Optional) The attribute key to get the original value of |
+
+### Example
+
+```typescript
+const user = await User.find('123');
+user.name = 'Updated';
+console.log(user.getOriginal('name')); // 'Old Name'
+console.log(user.getOriginal()); // { id: '123', name: 'Old Name', ... }
+```
+
+
+
+  `returns` — The original value of the attribute, or all original attributes
+
+
+
 ## toObject
 
 
@@ -892,7 +919,6 @@ Fires a model event.
 | Name | Description |
 |------|-------------|
 | `event` | Event name to fire |
-| `halt` | Whether to halt on false return |
 
 
 

@@ -639,6 +639,23 @@ If a model is bound, returns hydrated model instances.
 
 
 
+## cache
+
+
+Enable caching for this query.
+
+
+### Parameters
+
+| Name | Description |
+|------|-------------|
+| `ttl` | seconds to live |
+| `store` | optional cache store name |
+
+
+
+
+
 ## with
 
 

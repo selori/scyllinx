@@ -1,13 +1,13 @@
 // clean.js
 import { rm } from 'fs/promises';
 
-async function clean() {
+async function clean(directory) {
   try {
-    await rm('dist', { recursive: true, force: true });
-    console.log('dist klasörü silindi.');
+    await rm(directory, { recursive: true, force: true });
+    console.log(directory, ' klasörü silindi.');
   } catch (err) {
     console.error('Silme hatası:', err);
   }
 }
 
-clean();
+clean('dist');
