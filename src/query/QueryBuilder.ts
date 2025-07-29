@@ -685,7 +685,7 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
     const result = await this.driver.query(sql, params)
 
     if (this.cacheTtl) {
-      const key = this.cacheKey ?? JSON.stringify({ sql: this.toSql(), params })
+      const key = this.cacheKey ?? this.generateCacheKey()
       const cacheManager = CacheManager.getInstance()
 
       let rawRows = await cacheManager.remember(
@@ -724,26 +724,6 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
     return models
   }
 
-  public async execute(): Promise<TModel[]> {
-    const sql = this.grammar.compileSelect(this.toBase())
-    const params = this.getParams()
-
-    const result = await this.driver.query(sql, params)
-
-    let models: TModel[] = []
-    if (this.model) {
-      models = result.rows.map((row) => this.hydrate(row))
-    } else {
-      models = result.rows
-    }
-
-    if (this.eager.length) {
-      await Promise.all(models.map((m) => this.loadEagerFor(m, this.eager)))
-    }
-
-    return models
-  }
-
   /**
    * Enable caching for this query.
    * @param ttl seconds to live
@@ -754,6 +734,10 @@ export class QueryBuilder<TModel extends Model<any>, TAttrs> {
     this.cacheKey = key
     this.cacheStore = store
     return this
+  }
+
+  generateCacheKey(): string {
+    return JSON.stringify({ sql: this.toSql(), params: this.getParams() })
   }
 
   /**

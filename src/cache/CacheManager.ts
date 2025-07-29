@@ -66,7 +66,7 @@ export class CacheManager {
     return await this.getStore(store).remember(key, ttl, callback)
   }
 
-  tags(tags: string[]): TaggedCache {
+  tags(...tags: string[]): TaggedCache {
     return new TaggedCache(this, tags)
   }
 }
