@@ -13,13 +13,7 @@ async function main() {
   // Bağlantıyı kur
   const connManager = ConnectionManager.getInstance()
   const connectionConfig = {
-    driver: 'scylladb' as const,
-    host: '2.58.80.193', 
-    localDataCenter: 'nova', 
-    keyspace: 'blog_system',
-    username: 'wyrex',
-    password: 'g4z4i2d05Y',
-    options: {}
+    ...
   }
 
   await connManager.addConnection("default", connectionConfig)
